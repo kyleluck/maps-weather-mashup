@@ -85,7 +85,7 @@ function createMarkers() {
         //size: new google.maps.Size(50, 50),
         size: new google.maps.Size(20, 47),
         origin: new google.maps.Point(0, 0),
-        anchor: new google.maps.Point(25, 25)
+        anchor: new google.maps.Point(15, 25)
       };
 
     var marker = new google.maps.Marker({
@@ -129,7 +129,7 @@ function createMarkers() {
             url: marker.imageTempGauge,
             size: new google.maps.Size(20, 47),
             origin: new google.maps.Point(0, 0),
-            anchor: new google.maps.Point(25, 25)
+            anchor: new google.maps.Point(15, 25)
           };
         marker.iconInUse = false;
       } else {
@@ -145,6 +145,8 @@ function createMarkers() {
       marker.setIcon(null);
       marker.setIcon(image);
     }, 5000);
+
+    //bind event listener
     marker.addListener('click', function() {
       openInfoWindow(marker);
     });
