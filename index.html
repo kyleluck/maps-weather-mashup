@@ -12,7 +12,7 @@
     <div class="sidebar">
       <div ng-repeat="city in cityData" class="sidebardiv">
         <p>{{city.name}}</p>
-        <p>{{city.main.temp}}</p>
+        <p>{{city.main.temp}}&deg;F</p>
         <img ng-src="http://openweathermap.org/img/w/{{city.weather[0].icon}}.png">
         <hr>
       </div>

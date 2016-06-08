@@ -72,9 +72,9 @@ function createMarkers() {
       '<h1 id="firstHeading" class="firstHeading">' + city.name + '</h1>'+
       '<div id="bodyContent" class="bodyContent">'+
       '<h3>' + city.weather[0].description + '</h3>' +
-      '<ul><li>Temperature: ' + city.main.temp + '</li>' +
-      '<li>High: ' + city.main.temp_max + '</li>' +
-      '<li>Low: ' + city.main.temp_min + '</li>' +
+      '<ul><li>Temperature: ' + city.main.temp + '&deg;F</li>' +
+      '<li>High: ' + city.main.temp_max + '&deg;F</li>' +
+      '<li>Low: ' + city.main.temp_min + '&deg;F</li>' +
       '<li>Pressure: ' + city.main.pressure + '</li>' +
       '<li>Humidity: ' + city.main.humidity + '</li>' +
       '<li>Wind Speed: ' + city.wind.speed + '</li>' +
@@ -96,5 +96,5 @@ function createMarkers() {
       infowindow.open(map, marker);
     });
   });
-  console.log(markers);
+
 }

@@ -7,13 +7,14 @@ html, body {
 }
 .map {
   height: 100%;
-  width: 70%;
+  width: 80%;
   float: left;
 }
 .sidebar {
   height: 100%;
-  width: 30%;
+  width: 20%;
   float: left;
+  text-align: center;
   overflow: auto;
 }
 .sidebardiv {
