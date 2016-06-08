@@ -81,7 +81,7 @@ function createMarkers() {
     var image =
       {
         //url: 'http://openweathermap.org/img/w/' + city.weather[0].icon + '.png',
-        url: imageTempGauge,
+        url: imagePath,
         //size: new google.maps.Size(50, 50),
         size: new google.maps.Size(20, 47),
         origin: new google.maps.Point(0, 0),
@@ -111,40 +111,14 @@ function createMarkers() {
 
     marker.contentString = contentString;
     marker.cityName = city.name;
-    marker.imageTempGauge = imageTempGauge; //use this if iconInUse is true
-    marker.imageWeatherIcon = imageWeatherIcon; //use this if iconInUse is false
-    marker.iconInUse = false;
-
+    marker.imageTempGauge = imageTempGauge;
+    marker.imageWeatherIcon = imageWeatherIcon;
+    
     markers.push(marker);
 
   }); // end forEach
 
   markers.forEach(function(marker) {
-    //switch icon images every 5 seconds
-    setInterval(function() {
-      var image;
-      if (marker.iconInUse) {
-        image =
-          {
-            url: marker.imageTempGauge,
-            size: new google.maps.Size(20, 47),
-            origin: new google.maps.Point(0, 0),
-            anchor: new google.maps.Point(25, 25)
-          };
-        marker.iconInUse = false;
-      } else {
-        image =
-          {
-            url: marker.imageWeatherIcon,
-            size: new google.maps.Size(50, 50),
-            origin: new google.maps.Point(0, 0),
-            anchor: new google.maps.Point(25, 25)
-          };
-        marker.iconInUse = true;
-      }
-      marker.setIcon(null);
-      marker.setIcon(image);
-    }, 5000);
     marker.addListener('click', function() {
       openInfoWindow(marker);
     });
