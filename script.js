@@ -26,8 +26,19 @@ var citiesData = [];
 var map;
 var markers = [];
 
+//one info window for all markers
+var infowindow = new google.maps.InfoWindow({
+  pixelOffset: new google.maps.Size(0, 15)
+});
+
 var app = angular.module('weatherapp', []);
 app.controller('MainController', function($scope, $http) {
+
+  map = new google.maps.Map(document.getElementById('map'), {
+    center: {lat: 39.099727, lng: -94.578567},
+    zoom: 4
+  });
+
   var cities = cityIds.join(',');
   var url = 'http://api.openweathermap.org/data/2.5/group?id=' + cities + '&units=imperial&APPID=2316d4952cbc949469b1675923056c70';
   $http.get(url)
@@ -41,14 +52,17 @@ app.controller('MainController', function($scope, $http) {
   }, function(response) {
     console.log('error is ', response);
   });
-});
 
-function initMap() {
-  map = new google.maps.Map(document.getElementById('map'), {
-    center: {lat: 39.099727, lng: -94.578567},
-    zoom: 4
-  });
-}
+  $scope.openInfoWindow = function (city) {
+    markers.forEach(function(marker) {
+      if (marker.cityName === city) {
+        openInfoWindow(marker);
+        return;
+      }
+    });
+  };
+}); //end MainController
+
 
 function createMarkers() {
   citiesData.forEach(function(city) {
@@ -83,18 +97,19 @@ function createMarkers() {
       '</div>';
 
     marker.contentString = contentString;
+    marker.cityName = city.name;
     markers.push(marker);
 
   }); // end forEach
 
-  //one info window for all markers
-  var infowindow = new google.maps.InfoWindow({});
-
   markers.forEach(function(marker) {
     marker.addListener('click', function() {
-      infowindow.setContent(marker.contentString);
-      infowindow.open(map, marker);
+      openInfoWindow(marker);
     });
   });
+} //end createMarkers
 
+function openInfoWindow(marker) {
+  infowindow.setContent(marker.contentString);
+  infowindow.open(map, marker);
 }

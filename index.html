@@ -5,13 +5,14 @@
     <title>Maps - Weather Mashup</title>
     <link rel="stylesheet" href="style.css" media="screen" title="no title" charset="utf-8">
     <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css">
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB5R-SL0sa3h31vPenaEd1meNL4u0gq67s&libraries=places"></script>
   </head>
   <body>
 
     <div id="map" class="map"></div>
     <div class="sidebar">
       <div ng-repeat="city in cityData" class="sidebardiv">
-        <p>{{city.name}}</p>
+        <p ng-click="openInfoWindow(city.name)">{{city.name}}</p>
         <p>{{city.main.temp}}&deg;F</p>
         <img ng-src="http://openweathermap.org/img/w/{{city.weather[0].icon}}.png">
         <hr>
@@ -19,7 +20,6 @@
     </div>
 
     <script src="angular.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB5R-SL0sa3h31vPenaEd1meNL4u0gq67s&libraries=places&callback=initMap" async defer></script>
     <script src="script.js"></script>
   </body>
 </html>
