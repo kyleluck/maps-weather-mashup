@@ -24,7 +24,7 @@ var cityIds = [
 ];
 var citiesData = [];
 var map;
-
+var markers = [];
 
 var app = angular.module('weatherapp', []);
 app.controller('MainController', function($scope, $http) {
@@ -35,8 +35,8 @@ app.controller('MainController', function($scope, $http) {
       console.log(response);
       response.data.list.forEach(function(city) {
         citiesData.push(city);
-        createMarkers();
       });
+      createMarkers();
       $scope.cityData = citiesData;
   }, function(response) {
     console.log('error is ', response);
@@ -67,5 +67,34 @@ function createMarkers() {
       icon: image
     });
     marker.setMap(map);
+
+    var contentString = '<div id="content">'+
+      '<h1 id="firstHeading" class="firstHeading">' + city.name + '</h1>'+
+      '<div id="bodyContent" class="bodyContent">'+
+      '<h3>' + city.weather[0].description + '</h3>' +
+      '<ul><li>Temperature: ' + city.main.temp + '</li>' +
+      '<li>High: ' + city.main.temp_max + '</li>' +
+      '<li>Low: ' + city.main.temp_min + '</li>' +
+      '<li>Pressure: ' + city.main.pressure + '</li>' +
+      '<li>Humidity: ' + city.main.humidity + '</li>' +
+      '<li>Wind Speed: ' + city.wind.speed + '</li>' +
+      '</ul>' +
+      '</div>'+
+      '</div>';
+
+    marker.contentString = contentString;
+    markers.push(marker);
+
+  }); // end forEach
+
+  //one info window for all markers
+  var infowindow = new google.maps.InfoWindow({});
+
+  markers.forEach(function(marker) {
+    marker.addListener('click', function() {
+      infowindow.setContent(marker.contentString);
+      infowindow.open(map, marker);
+    });
   });
+  console.log(markers);
 }

@@ -3,6 +3,7 @@ html, body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: Roboto,Arial,sans-serif;
 }
 .map {
   height: 100%;
@@ -14,4 +15,7 @@ html, body {
   width: 30%;
   float: left;
   overflow: auto;
+}
+.sidebardiv {
+  padding: 2px 5px;
 }

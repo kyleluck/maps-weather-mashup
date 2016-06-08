@@ -4,15 +4,17 @@
     <meta charset="utf-8">
     <title>Maps - Weather Mashup</title>
     <link rel="stylesheet" href="style.css" media="screen" title="no title" charset="utf-8">
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css">
   </head>
   <body>
 
     <div id="map" class="map"></div>
     <div class="sidebar">
-      <div ng-repeat="city in cityData">
+      <div ng-repeat="city in cityData" class="sidebardiv">
         <p>{{city.name}}</p>
         <p>{{city.main.temp}}</p>
         <img ng-src="http://openweathermap.org/img/w/{{city.weather[0].icon}}.png">
+        <hr>
       </div>
     </div>
 
