@@ -29,9 +29,10 @@
       $scope.cityData = citiesData;
     });
 
-    $scope.openInfoWindow = function (city) {
-          openInfoWindow(city);
+    $scope.openInfoWindow = function(cityMarker) {
+      openInfoWindow(cityMarker);
     };
+
   }); //end MainController
 
   app.factory('weather', function($http) {
