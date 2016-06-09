@@ -1,9 +1,7 @@
 (function() {
-  
+
   var citiesData = [];
   var map;
-  var markers = [];
-
 
   //one info window for all markers
   var infowindow = new google.maps.InfoWindow({
@@ -32,12 +30,7 @@
     });
 
     $scope.openInfoWindow = function (city) {
-      markers.forEach(function(marker) {
-        if (marker.cityName === city) {
-          openInfoWindow(marker);
-          return;
-        }
-      });
+          openInfoWindow(city);
     };
   }); //end MainController
 
@@ -87,49 +80,45 @@
 
 
       //initialize google maps marker
-      var marker = new google.maps.Marker({
+      city.marker = new google.maps.Marker({
         position: myLatLng,
         map: map,
         icon: image
       });
 
       //set each marker on the map
-      marker.setMap(map);
+      city.marker.setMap(map);
 
       //build HTML content for InfoWindow
       var contentString = createInfoWindowHTML(city);
 
-      marker.contentString = contentString;
-      marker.cityName = city.name;
-      marker.imageTempGauge = imageTempGauge; //use this if iconState is true
-      marker.imageWeatherIcon = imageWeatherIcon; //use this if iconState is false
-      marker.iconState = false;
+      city.marker.contentString = contentString;
+      city.marker.cityName = city.name;
+      city.marker.imageTempGauge = imageTempGauge; //use this if iconState is true
+      city.marker.imageWeatherIcon = imageWeatherIcon; //use this if iconState is false
+      city.marker.iconState = false;
 
-      markers.push(marker);
-
-    }); // end citiesData forEach
-
-    markers.forEach(function(marker) {
-      //switch icon images every 5 seconds
+      //city.markers.push(marker);
       setInterval(function() {
         var image;
-        if (marker.iconState) {
-          image = setupIconImage(marker.imageTempGauge, 20, 47, 15, 25);
-          marker.iconState = false;
+        if (city.marker.iconState) {
+          image = setupIconImage(city.marker.imageTempGauge, 20, 47, 15, 25);
+          city.marker.iconState = false;
         } else {
-          image = setupIconImage(marker.imageWeatherIcon, 50, 50, 25, 25);
-          marker.iconState = true;
+          image = setupIconImage(city.marker.imageWeatherIcon, 50, 50, 25, 25);
+          city.marker.iconState = true;
         }
-        marker.setIcon(null);
-        marker.setIcon(image);
+        city.marker.setIcon(null);
+        city.marker.setIcon(image);
       }, 5000);
 
       //bind event listener
-      marker.addListener('click', function() {
-        openInfoWindow(marker);
+      city.marker.addListener('click', function() {
+        openInfoWindow(city.marker);
       });
 
-    }); //end markers.forEach
+    }); // end citiesData forEach
+
 
   } //end createMarkers
 
