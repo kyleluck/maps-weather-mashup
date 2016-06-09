@@ -17,3 +17,6 @@ html, body {
   text-align: center;
   overflow: auto;
 }
+.sidebarimage {
+  vertical-align: middle;
+}
