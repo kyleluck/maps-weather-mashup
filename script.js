@@ -1,6 +1,3 @@
-//Open weather Map API Key: 2316d4952cbc949469b1675923056c70
-//image: http://openweathermap.org/img/w/[ID].png
-
 var cityIds = [
   4180439,
   5128638,
@@ -25,7 +22,6 @@ var cityIds = [
 var citiesData = [];
 var map;
 var markers = [];
-var markerState = 1;
 
 
 //one info window for all markers
@@ -34,6 +30,7 @@ var infowindow = new google.maps.InfoWindow({
 });
 
 var app = angular.module('weatherapp', []);
+
 app.controller('MainController', function($scope, $http, weather) {
 
   map = new google.maps.Map(document.getElementById('map'), {
@@ -76,27 +73,32 @@ app.factory('weather', function($http) {
       }).then(callback);
     }
   };
-});
+}); //end weather factory
 
+function getTempIcon(temp) {
+  var imageTempGauge = "/images/";
+  if (temp >= 80) {
+    imageTempGauge += "hot.png";
+  } else if (temp < 60) {
+    imageTempGauge += "cold.png";
+  } else {
+    imageTempGauge += "normal.png";
+  }
+  return imageTempGauge;
+}
 
 function createMarkers() {
   citiesData.forEach(function(city) {
     var myLatLng = {lat: city.coord.lat, lng: city.coord.lon};
-    var imageTempGauge = "/images/";
-    if (city.main.temp >= 80) {
-      imageTempGauge += "hot.png";
-    } else if (city.main.temp < 60) {
-      imageTempGauge += "cold.png";
-    } else {
-      imageTempGauge += "normal.png";
-    }
+
+    //call function to get image temp icon depending on city temperature
+    var imageTempGauge = getTempIcon(city.main.temp);
+
     var imageWeatherIcon = 'http://openweathermap.org/img/w/' + city.weather[0].icon + '.png';
 
     var image =
       {
-        //url: 'http://openweathermap.org/img/w/' + city.weather[0].icon + '.png',
         url: imageTempGauge,
-        //size: new google.maps.Size(50, 50),
         size: new google.maps.Size(20, 47),
         origin: new google.maps.Point(0, 0),
         anchor: new google.maps.Point(15, 25)
