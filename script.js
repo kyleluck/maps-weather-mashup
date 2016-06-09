@@ -3,18 +3,11 @@
   var citiesData = [];
   var googleMap;
 
-  //one info window for all markers
-  var infowindow = new google.maps.InfoWindow({
-    pixelOffset: new google.maps.Size(0, 15)
-  });
-
   var app = angular.module('weatherapp', []);
 
   app.controller('MainController', function($scope, WeatherService, GoogleMapsService) {
 
-
     googleMap = GoogleMapsService;
-
     var cityIds = [4180439, 5128638, 4560349, 4726206, 4671654, 5809844, 5368361, 5391811, 5308655, 4684888, 4887398, 5391959, 5392171, 4164138, 4273837, 5746545, 4699066, 5419384, 4990729];
 
     WeatherService.getWeather(cityIds, function(response) {
@@ -40,17 +33,17 @@
       zoom: 4
     });
 
-    return {
-      map: map,
-      plotData: function() {
+    var infowindow = new google.maps.InfoWindow({
+      pixelOffset: new google.maps.Size(0, 15)
+    });
 
-      },
+    return {
       openInfoWindow: function(marker) {
         infowindow.setContent(marker.contentString);
         infowindow.open(map, marker);
       },
       getTempIcon: function(temp) {
-        var imageTempGauge = "/images/";
+        var imageTempGauge = "images/";
         if (temp >= 80) {
           imageTempGauge += "hot.png";
         } else if (temp < 60) {
@@ -100,12 +93,12 @@
           //initialize google maps marker; put marker object on city object
           city.marker = new google.maps.Marker({
             position: myLatLng,
-            map: googleMap.map,
+            map: map,
             icon: image
           });
 
           //set each marker on the map
-          city.marker.setMap(googleMap.map);
+          city.marker.setMap(map);
 
           //build HTML content for InfoWindow
           var contentString = googleMap.createInfoWindowHTML(city);
