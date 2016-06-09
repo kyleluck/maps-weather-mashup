@@ -13,7 +13,8 @@ var app = angular.module('weatherapp', []);
 
 app.controller('MainController', function($scope, $http, weather) {
 
-  map = new google.maps.Map(document.getElementById('map'), {
+  var mapElement = document.getElementById('map');
+  map = new google.maps.Map(mapElement, {
     center: {lat: 39.099727, lng: -94.578567},
     zoom: 4
   });
@@ -77,16 +78,14 @@ function createMarkers() {
     //call function to get image temp icon depending on city temperature
     var imageTempGauge = getTempIcon(city.main.temp);
 
+    //construct URL for weather icon
     var imageWeatherIcon = 'http://openweathermap.org/img/w/' + city.weather[0].icon + '.png';
 
-    var image =
-      {
-        url: imageTempGauge,
-        size: new google.maps.Size(20, 47),
-        origin: new google.maps.Point(0, 0),
-        anchor: new google.maps.Point(15, 25)
-      };
+    //initialize marker icon with imageTempGauge
+    var image = setupIconImage(imageTempGauge, 20, 47, 15, 25);
 
+
+    //initialize google maps marker
     var marker = new google.maps.Marker({
       position: myLatLng,
       map: map,
@@ -126,22 +125,10 @@ function createMarkers() {
     setInterval(function() {
       var image;
       if (marker.iconState) {
-        image =
-          {
-            url: marker.imageTempGauge,
-            size: new google.maps.Size(20, 47),
-            origin: new google.maps.Point(0, 0),
-            anchor: new google.maps.Point(15, 25)
-          };
+        image = setupIconImage(marker.imageTempGauge, 20, 47, 15, 25);
         marker.iconState = false;
       } else {
-        image =
-          {
-            url: marker.imageWeatherIcon,
-            size: new google.maps.Size(50, 50),
-            origin: new google.maps.Point(0, 0),
-            anchor: new google.maps.Point(25, 25)
-          };
+        image = setupIconImage(marker.imageWeatherIcon, 50, 50, 25, 25);
         marker.iconState = true;
       }
       marker.setIcon(null);
@@ -156,6 +143,15 @@ function createMarkers() {
   }); //end markers.forEach
 
 } //end createMarkers
+
+function setupIconImage(iconUrl, sizeW, sizeH, pointX, pointY) {
+  return {
+    url: iconUrl,
+    size: new google.maps.Size(sizeW, sizeH),
+    origin: new google.maps.Point(0, 0),
+    anchor: new google.maps.Point(pointX, pointY)
+  };
+}
 
 function openInfoWindow(marker) {
   infowindow.setContent(marker.contentString);
