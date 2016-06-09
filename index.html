@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="weatherapp" ng-controller="MainController">
+<html ng-app="weatherapp">
   <head>
     <meta charset="utf-8">
     <title>Maps - Weather Mashup</title>
@@ -10,8 +10,10 @@
   <body>
 
     <div id="map" class="map"></div>
-    
-    <ng-view></ng-view>
+
+    <div class="sidebar">
+      <ng-view></ng-view>
+    </div>
 
     <script src="angular.js"></script>
     <script src="angular-route.js"></script>

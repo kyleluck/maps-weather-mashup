@@ -1,35 +1,37 @@
-(function() {
+//(function() {
 
   var citiesData = [];
   var googleMap;
+  var cityIds = [4180439, 5128638, 4560349, 4726206, 4671654, 5809844, 5368361, 5391811, 5308655, 4684888, 4887398, 5391959, 5392171, 4164138, 4273837, 5746545, 4699066, 5419384, 4990729];
 
   var app = angular.module('weatherapp', ['ngRoute']);
 
   app.config(function($routeProvider) {
     $routeProvider.when('/', {
-      templateUrl: 'main-sidebar.html'
+      templateUrl: 'overview.html',
+      controller: 'MainController'
     })
-    .when('/forecast', {
-      templateUrl: 'forecast-sidebar.html'
-    })
+    .when('/forecast/:cityId', {
+      templateUrl: 'forecast-sidebar.html',
+      controller: 'ForecastController'
+    });
   });
 
   app.controller('MainController', function($scope, WeatherService, GoogleMapsService) {
 
-    googleMap = GoogleMapsService;
-    var cityIds = [4180439, 5128638, 4560349, 4726206, 4671654, 5809844, 5368361, 5391811, 5308655, 4684888, 4887398, 5391959, 5392171, 4164138, 4273837, 5746545, 4699066, 5419384, 4990729];
+    mainMap = GoogleMapsService.createMap();
 
     WeatherService.getWeather(cityIds, function(response) {
-      console.log('the response is ', response);
+      //console.log('the response is ', response);
       response.data.list.forEach(function(city) {
         citiesData.push(city);
       });
-      googleMap.createMarkers(citiesData);
+      GoogleMapsService.createMarkers(citiesData, mainMap);
       $scope.cityData = citiesData;
     });
 
     $scope.openInfoWindow = function(cityMarker) {
-      googleMap.openInfoWindow(cityMarker);
+      GoogleMapsService.openInfoWindow(cityMarker);
     };
 
   }); //end MainController
@@ -37,16 +39,22 @@
   app.factory('GoogleMapsService', function() {
 
     var mapElement = document.getElementById('map');
-    map = new google.maps.Map(mapElement, {
-      center: {lat: 39.099727, lng: -94.578567},
-      zoom: 4
-    });
+    // map = new google.maps.Map(mapElement, {
+    //   center: {lat: 39.099727, lng: -94.578567},
+    //   zoom: 4
+    // });
 
     var infowindow = new google.maps.InfoWindow({
       pixelOffset: new google.maps.Size(0, 15)
     });
 
     return {
+      createMap: function() {
+        return new google.maps.Map(mapElement, {
+          center: {lat: 39.099727, lng: -94.578567},
+          zoom: 4
+        });
+      },
       openInfoWindow: function(marker) {
         infowindow.setContent(marker.contentString);
         infowindow.open(map, marker);
@@ -86,31 +94,31 @@
           '</div>';
       },
       createMarkers: function(citiesData) {
-
+        var t = this; //save a reference to this for use below
         citiesData.forEach(function(city) {
           var myLatLng = {lat: city.coord.lat, lng: city.coord.lon};
 
           //call function to get image temp icon depending on city temperature
-          var imageTempGauge = googleMap.getTempIcon(city.main.temp);
+          var imageTempGauge = t.getTempIcon(city.main.temp);
 
           //construct URL for weather icon
           var imageWeatherIcon = 'http://openweathermap.org/img/w/' + city.weather[0].icon + '.png';
 
           //initialize marker icon with imageTempGauge
-          var image = googleMap.setupIconImage(imageTempGauge, 20, 47, 10, 25);
+          var image = t.setupIconImage(imageTempGauge, 20, 47, 10, 25);
 
           //initialize google maps marker; put marker object on city object
           city.marker = new google.maps.Marker({
             position: myLatLng,
-            map: map,
+            map: mainMap,
             icon: image
           });
 
           //set each marker on the map
-          city.marker.setMap(map);
+          city.marker.setMap(mainMap);
 
           //build HTML content for InfoWindow
-          var contentString = googleMap.createInfoWindowHTML(city);
+          var contentString = t.createInfoWindowHTML(city);
 
           city.marker.contentString = contentString;
           city.marker.cityName = city.name;
@@ -121,10 +129,10 @@
           setInterval(function() {
             var image;
             if (city.marker.iconState) {
-              image = googleMap.setupIconImage(city.marker.imageTempGauge, 20, 47, 10, 25);
+              image = t.setupIconImage(city.marker.imageTempGauge, 20, 47, 10, 25);
               city.marker.iconState = false;
             } else {
-              image = googleMap.setupIconImage(city.marker.imageWeatherIcon, 50, 50, 25, 25);
+              image = t.setupIconImage(city.marker.imageWeatherIcon, 50, 50, 25, 25);
               city.marker.iconState = true;
             }
             city.marker.setIcon(null);
@@ -133,7 +141,7 @@
 
           //bind event listener
           city.marker.addListener('click', function() {
-            googleMap.openInfoWindow(city.marker);
+            t.openInfoWindow(city.marker);
           });
 
         }); // end citiesData forEach
@@ -164,4 +172,61 @@
 
   }); //end weather factory
 
-})();
+  app.factory('ForecastService', function($http, $routeParams) {
+
+    var url = 'http://api.openweathermap.org/data/2.5/forecast';
+    var APPID = '2316d4952cbc949469b1675923056c70';
+    return {
+      getForecast: function(cityId, callback) {
+        $http({
+          url: url,
+          params: {
+            id: cityId,
+            units: 'imperial',
+            APPID: APPID
+          }
+        }).then(callback);
+      }
+    };
+
+
+
+  });
+
+  app.controller('ForecastController', function($scope, $routeParams, GoogleMapsService, ForecastService) {
+
+    var cityId = $routeParams.cityId;
+    var forecastData = [];
+    var mainMap = GoogleMapsService.createMap();
+    
+    ForecastService.getForecast(cityId, function(response) {
+      console.log('the forecast response is ', response);
+      response.data.list.forEach(function(day) {
+        forecastData.push(day);
+      });
+      $scope.forecastData = forecastData;
+    });
+
+
+    //zoom and pan when city details are displayed
+    citiesData.forEach(function(city) {
+      console.log(city.id);
+      if (city.id == cityId) {
+        console.log('this object matched ', city);
+        //googleMap.setCenter(city.marker.position);
+        return;
+      }
+    });
+
+
+  });
+
+  app.controller('OverviewController', function(WeatherService) {
+
+    // WeatherService.getWeather(cityIds, function() {
+    //
+    // });
+
+  });
+
+//})();

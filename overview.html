@@ -1,0 +1,8 @@
+<div ng-repeat="city in cityData" class="sidebardiv">
+  <p ng-click="openInfoWindow(city.marker)">
+    <img class="sidebarimage" ng-src="http://openweathermap.org/img/w/{{city.weather[0].icon}}.png">
+    {{city.name}} - {{city.main.temp}}&deg;F
+  </p>
+  <p><a href="#/forecast/{{city.id}}">5-day Forecast</a></p>
+  <hr>
+</div>

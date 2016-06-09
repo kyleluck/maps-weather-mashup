@@ -1,0 +1,9 @@
+<a href="#/">Back to Overview</a>
+<div ng-repeat="day in forecastData" class="sidebardiv">
+  <p>{{ day.dt_txt }}</p>
+  <p>Max Temp: {{ day.main.temp_max }}</p>
+  <p>Min Temp: {{ day.main.temp_min }}</p>
+  <p>{{ day.weather[0].description }}</p>
+  <img class="sidebarimage" ng-src="http://openweathermap.org/img/w/{{day.weather[0].icon}}.png">
+  <hr>
+</div>
