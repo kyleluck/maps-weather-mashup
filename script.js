@@ -3,7 +3,16 @@
   var citiesData = [];
   var googleMap;
 
-  var app = angular.module('weatherapp', []);
+  var app = angular.module('weatherapp', ['ngRoute']);
+
+  app.config(function($routeProvider) {
+    $routeProvider.when('/', {
+      templateUrl: 'main-sidebar.html'
+    })
+    .when('/forecast', {
+      templateUrl: 'forecast-sidebar.html'
+    })
+  });
 
   app.controller('MainController', function($scope, WeatherService, GoogleMapsService) {
 
