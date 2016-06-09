@@ -96,19 +96,7 @@ function createMarkers() {
     marker.setMap(map);
 
     //build HTML content for InfoWindow
-    var contentString = '<div id="content">'+
-      '<h1 id="firstHeading" class="firstHeading">' + city.name + '</h1>'+
-      '<div id="bodyContent" class="bodyContent">'+
-      '<h3>' + city.weather[0].description + '</h3>' +
-      '<ul><li>Temperature: ' + city.main.temp + '&deg;F</li>' +
-      '<li>High: ' + city.main.temp_max + '&deg;F</li>' +
-      '<li>Low: ' + city.main.temp_min + '&deg;F</li>' +
-      '<li>Pressure: ' + city.main.pressure + '</li>' +
-      '<li>Humidity: ' + city.main.humidity + '</li>' +
-      '<li>Wind Speed: ' + city.wind.speed + '</li>' +
-      '</ul>' +
-      '</div>'+
-      '</div>';
+    var contentString = createInfoWindowHTML(city);
 
     marker.contentString = contentString;
     marker.cityName = city.name;
@@ -118,7 +106,7 @@ function createMarkers() {
 
     markers.push(marker);
 
-  }); // end forEach
+  }); // end citiesData forEach
 
   markers.forEach(function(marker) {
     //switch icon images every 5 seconds
@@ -151,6 +139,22 @@ function setupIconImage(iconUrl, sizeW, sizeH, pointX, pointY) {
     origin: new google.maps.Point(0, 0),
     anchor: new google.maps.Point(pointX, pointY)
   };
+}
+
+function createInfoWindowHTML(city) {
+  return '<div id="content">'+
+    '<h1 id="firstHeading" class="firstHeading">' + city.name + '</h1>'+
+    '<div id="bodyContent" class="bodyContent">'+
+    '<h3>' + city.weather[0].description + '</h3>' +
+    '<ul><li>Temperature: ' + city.main.temp + '&deg;F</li>' +
+    '<li>High: ' + city.main.temp_max + '&deg;F</li>' +
+    '<li>Low: ' + city.main.temp_min + '&deg;F</li>' +
+    '<li>Pressure: ' + city.main.pressure + '</li>' +
+    '<li>Humidity: ' + city.main.humidity + '</li>' +
+    '<li>Wind Speed: ' + city.wind.speed + '</li>' +
+    '</ul>' +
+    '</div>'+
+    '</div>';
 }
 
 function openInfoWindow(marker) {
