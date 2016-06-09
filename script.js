@@ -36,6 +36,7 @@
   }); //end MainController
 
   app.factory('weather', function($http) {
+
     var url = 'http://api.openweathermap.org/data/2.5/group';
     var APPID = '2316d4952cbc949469b1675923056c70';
     return {
@@ -52,9 +53,11 @@
         });
       }
     };
+
   }); //end weather factory
 
   function getTempIcon(temp) {
+
     var imageTempGauge = "/images/";
     if (temp >= 80) {
       imageTempGauge += "hot.png";
@@ -64,9 +67,11 @@
       imageTempGauge += "normal.png";
     }
     return imageTempGauge;
+
   }
 
   function createMarkers() {
+
     citiesData.forEach(function(city) {
       var myLatLng = {lat: city.coord.lat, lng: city.coord.lon};
 
@@ -98,7 +103,6 @@
       city.marker.imageWeatherIcon = imageWeatherIcon; //use this if iconState is false
       city.marker.iconState = false;
 
-      //city.markers.push(marker);
       setInterval(function() {
         var image;
         if (city.marker.iconState) {
@@ -118,7 +122,6 @@
       });
 
     }); // end citiesData forEach
-
 
   } //end createMarkers
 
