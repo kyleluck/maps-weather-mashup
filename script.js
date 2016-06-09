@@ -90,6 +90,7 @@
           '<li>Humidity: ' + city.main.humidity + '</li>' +
           '<li>Wind Speed: ' + city.wind.speed + '</li>' +
           '</ul>' +
+          '<a href="#/forecast/' + city.id + '">5-day Forecast</a>' +
           '</div>'+
           '</div>';
       },
@@ -167,17 +168,9 @@
         }).then(callback, function(response) {
           console.log('error is ', response);
         });
-      }
-    };
-
-  }); //end weather factory
-
-  app.factory('ForecastService', function($http, $routeParams) {
-
-    var url = 'http://api.openweathermap.org/data/2.5/forecast';
-    var APPID = '2316d4952cbc949469b1675923056c70';
-    return {
+      },
       getForecast: function(cityId, callback) {
+        var url = 'http://api.openweathermap.org/data/2.5/forecast';
         $http({
           url: url,
           params: {
@@ -189,17 +182,15 @@
       }
     };
 
+  }); //end weather factory
 
-
-  });
-
-  app.controller('ForecastController', function($scope, $routeParams, GoogleMapsService, ForecastService) {
+  app.controller('ForecastController', function($scope, $routeParams, GoogleMapsService, WeatherService) {
 
     var cityId = $routeParams.cityId;
     var forecastData = [];
     var mainMap = GoogleMapsService.createMap();
-    
-    ForecastService.getForecast(cityId, function(response) {
+
+    WeatherService.getForecast(cityId, function(response) {
       console.log('the forecast response is ', response);
       response.data.list.forEach(function(day) {
         forecastData.push(day);
@@ -207,25 +198,15 @@
       $scope.forecastData = forecastData;
     });
 
-
     //zoom and pan when city details are displayed
     citiesData.forEach(function(city) {
-      console.log(city.id);
       if (city.id == cityId) {
         console.log('this object matched ', city);
-        //googleMap.setCenter(city.marker.position);
+        mainMap.setCenter(city.marker.position);
+        mainMap.setZoom(11);
         return;
       }
     });
-
-
-  });
-
-  app.controller('OverviewController', function(WeatherService) {
-
-    // WeatherService.getWeather(cityIds, function() {
-    //
-    // });
 
   });
 
