@@ -130,9 +130,9 @@ function createMarkers() {
 
     marker.contentString = contentString;
     marker.cityName = city.name;
-    marker.imageTempGauge = imageTempGauge; //use this if iconInUse is true
-    marker.imageWeatherIcon = imageWeatherIcon; //use this if iconInUse is false
-    marker.iconInUse = false;
+    marker.imageTempGauge = imageTempGauge; //use this if iconState is true
+    marker.imageWeatherIcon = imageWeatherIcon; //use this if iconState is false
+    marker.iconState = false;
 
     markers.push(marker);
 
@@ -142,7 +142,7 @@ function createMarkers() {
     //switch icon images every 5 seconds
     setInterval(function() {
       var image;
-      if (marker.iconInUse) {
+      if (marker.iconState) {
         image =
           {
             url: marker.imageTempGauge,
@@ -150,7 +150,7 @@ function createMarkers() {
             origin: new google.maps.Point(0, 0),
             anchor: new google.maps.Point(15, 25)
           };
-        marker.iconInUse = false;
+        marker.iconState = false;
       } else {
         image =
           {
@@ -159,7 +159,7 @@ function createMarkers() {
             origin: new google.maps.Point(0, 0),
             anchor: new google.maps.Point(25, 25)
           };
-        marker.iconInUse = true;
+        marker.iconState = true;
       }
       marker.setIcon(null);
       marker.setIcon(image);
