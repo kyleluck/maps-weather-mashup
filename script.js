@@ -10,7 +10,7 @@
 
   var app = angular.module('weatherapp', []);
 
-  app.controller('MainController', function($scope, $http, WeatherService, GoogleMapsService) {
+  app.controller('MainController', function($scope, WeatherService, GoogleMapsService) {
 
 
     googleMap = GoogleMapsService;
