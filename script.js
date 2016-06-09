@@ -77,10 +77,9 @@
       var imageWeatherIcon = 'http://openweathermap.org/img/w/' + city.weather[0].icon + '.png';
 
       //initialize marker icon with imageTempGauge
-      var image = setupIconImage(imageTempGauge, 20, 47, 15, 25);
+      var image = setupIconImage(imageTempGauge, 20, 47, 10, 25);
 
-
-      //initialize google maps marker
+      //initialize google maps marker; put marker object on city object
       city.marker = new google.maps.Marker({
         position: myLatLng,
         map: map,
@@ -103,7 +102,7 @@
       setInterval(function() {
         var image;
         if (city.marker.iconState) {
-          image = setupIconImage(city.marker.imageTempGauge, 20, 47, 15, 25);
+          image = setupIconImage(city.marker.imageTempGauge, 20, 47, 10, 25);
           city.marker.iconState = false;
         } else {
           image = setupIconImage(city.marker.imageWeatherIcon, 50, 50, 25, 25);
