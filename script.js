@@ -109,8 +109,11 @@ function createMarkers() {
       map: map,
       icon: image
     });
+
+    //set each marker on the map
     marker.setMap(map);
 
+    //build HTML content for InfoWindow
     var contentString = '<div id="content">'+
       '<h1 id="firstHeading" class="firstHeading">' + city.name + '</h1>'+
       '<div id="bodyContent" class="bodyContent">'+
@@ -166,7 +169,9 @@ function createMarkers() {
     marker.addListener('click', function() {
       openInfoWindow(marker);
     });
-  });
+
+  }); //end markers.forEach
+
 } //end createMarkers
 
 function openInfoWindow(marker) {
