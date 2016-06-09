@@ -1,6 +1,3 @@
-//Open weather Map API Key: 2316d4952cbc949469b1675923056c70
-//image: http://openweathermap.org/img/w/[ID].png
-
 var cityIds = [
   4180439,
   5128638,
@@ -25,7 +22,6 @@ var cityIds = [
 var citiesData = [];
 var map;
 var markers = [];
-var markerState = 1;
 
 
 //one info window for all markers
@@ -34,25 +30,21 @@ var infowindow = new google.maps.InfoWindow({
 });
 
 var app = angular.module('weatherapp', []);
-app.controller('MainController', function($scope, $http) {
+
+app.controller('MainController', function($scope, $http, weather) {
 
   map = new google.maps.Map(document.getElementById('map'), {
     center: {lat: 39.099727, lng: -94.578567},
     zoom: 4
   });
 
-  var cities = cityIds.join(',');
-  var url = 'http://api.openweathermap.org/data/2.5/group?id=' + cities + '&units=imperial&APPID=2316d4952cbc949469b1675923056c70';
-  $http.get(url)
-    .then(function(response) {
-      console.log(response);
-      response.data.list.forEach(function(city) {
-        citiesData.push(city);
-      });
-      createMarkers();
-      $scope.cityData = citiesData;
-  }, function(response) {
-    console.log('error is ', response);
+  weather.getWeather(function(response) {
+    console.log('the response is ', response);
+    response.data.list.forEach(function(city) {
+      citiesData.push(city);
+    });
+    createMarkers();
+    $scope.cityData = citiesData;
   });
 
   $scope.openInfoWindow = function (city) {
@@ -65,27 +57,51 @@ app.controller('MainController', function($scope, $http) {
   };
 }); //end MainController
 
+app.factory('weather', function($http) {
+  var cities = cityIds.join(',');
+  var url = 'http://api.openweathermap.org/data/2.5/group';
+  var APPID = '2316d4952cbc949469b1675923056c70';
+  return {
+    getWeather: function(callback) {
+      $http({
+        url: url,
+        params: {
+          id: cities,
+          units: 'imperial',
+          APPID: APPID
+        }
+      }).then(callback);
+    }
+  };
+}); //end weather factory
+
+function getTempIcon(temp) {
+  var imageTempGauge = "/images/";
+  if (temp >= 80) {
+    imageTempGauge += "hot.png";
+  } else if (temp < 60) {
+    imageTempGauge += "cold.png";
+  } else {
+    imageTempGauge += "normal.png";
+  }
+  return imageTempGauge;
+}
+
 function createMarkers() {
   citiesData.forEach(function(city) {
     var myLatLng = {lat: city.coord.lat, lng: city.coord.lon};
-    var imageTempGauge = "/images/";
-    if (city.main.temp >= 80) {
-      imageTempGauge += "hot.png";
-    } else if (city.main.temp < 60) {
-      imageTempGauge += "cold.png";
-    } else {
-      imageTempGauge += "normal.png";
-    }
+
+    //call function to get image temp icon depending on city temperature
+    var imageTempGauge = getTempIcon(city.main.temp);
+
     var imageWeatherIcon = 'http://openweathermap.org/img/w/' + city.weather[0].icon + '.png';
 
     var image =
       {
-        //url: 'http://openweathermap.org/img/w/' + city.weather[0].icon + '.png',
         url: imageTempGauge,
-        //size: new google.maps.Size(50, 50),
         size: new google.maps.Size(20, 47),
         origin: new google.maps.Point(0, 0),
-        anchor: new google.maps.Point(25, 25)
+        anchor: new google.maps.Point(15, 25)
       };
 
     var marker = new google.maps.Marker({
@@ -93,8 +109,11 @@ function createMarkers() {
       map: map,
       icon: image
     });
+
+    //set each marker on the map
     marker.setMap(map);
 
+    //build HTML content for InfoWindow
     var contentString = '<div id="content">'+
       '<h1 id="firstHeading" class="firstHeading">' + city.name + '</h1>'+
       '<div id="bodyContent" class="bodyContent">'+
@@ -111,9 +130,9 @@ function createMarkers() {
 
     marker.contentString = contentString;
     marker.cityName = city.name;
-    marker.imageTempGauge = imageTempGauge; //use this if iconInUse is true
-    marker.imageWeatherIcon = imageWeatherIcon; //use this if iconInUse is false
-    marker.iconInUse = false;
+    marker.imageTempGauge = imageTempGauge; //use this if iconState is true
+    marker.imageWeatherIcon = imageWeatherIcon; //use this if iconState is false
+    marker.iconState = false;
 
     markers.push(marker);
 
@@ -123,15 +142,15 @@ function createMarkers() {
     //switch icon images every 5 seconds
     setInterval(function() {
       var image;
-      if (marker.iconInUse) {
+      if (marker.iconState) {
         image =
           {
             url: marker.imageTempGauge,
             size: new google.maps.Size(20, 47),
             origin: new google.maps.Point(0, 0),
-            anchor: new google.maps.Point(25, 25)
+            anchor: new google.maps.Point(15, 25)
           };
-        marker.iconInUse = false;
+        marker.iconState = false;
       } else {
         image =
           {
@@ -140,15 +159,19 @@ function createMarkers() {
             origin: new google.maps.Point(0, 0),
             anchor: new google.maps.Point(25, 25)
           };
-        marker.iconInUse = true;
+        marker.iconState = true;
       }
       marker.setIcon(null);
       marker.setIcon(image);
     }, 5000);
+
+    //bind event listener
     marker.addListener('click', function() {
       openInfoWindow(marker);
     });
-  });
+
+  }); //end markers.forEach
+
 } //end createMarkers
 
 function openInfoWindow(marker) {

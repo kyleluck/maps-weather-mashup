@@ -1,24 +1,4 @@
-var cityIds = [
-  4180439,
-  5128638,
-  4560349,
-  4726206,
-  4671654,
-  5809844,
-  5368361,
-  5391811,
-  5308655,
-  4684888,
-  4887398,
-  5391959,
-  5392171,
-  4164138,
-  4273837,
-  5746545,
-  4699066,
-  5419384,
-  4990729
-];
+
 var citiesData = [];
 var map;
 var markers = [];
@@ -38,7 +18,9 @@ app.controller('MainController', function($scope, $http, weather) {
     zoom: 4
   });
 
-  weather.getWeather(function(response) {
+  var cityIds = [4180439, 5128638, 4560349, 4726206, 4671654, 5809844, 5368361, 5391811, 5308655, 4684888, 4887398, 5391959, 5392171, 4164138, 4273837, 5746545, 4699066, 5419384, 4990729];
+
+  weather.getWeather(cityIds, function(response) {
     console.log('the response is ', response);
     response.data.list.forEach(function(city) {
       citiesData.push(city);
@@ -58,19 +40,20 @@ app.controller('MainController', function($scope, $http, weather) {
 }); //end MainController
 
 app.factory('weather', function($http) {
-  var cities = cityIds.join(',');
   var url = 'http://api.openweathermap.org/data/2.5/group';
   var APPID = '2316d4952cbc949469b1675923056c70';
   return {
-    getWeather: function(callback) {
+    getWeather: function(cityIds, callback) {
       $http({
         url: url,
         params: {
-          id: cities,
+          id: cityIds.join(','),
           units: 'imperial',
           APPID: APPID
         }
-      }).then(callback);
+      }).then(callback, function(response) {
+        console.log('error is ', response);
+      });
     }
   };
 }); //end weather factory
