@@ -34,25 +34,20 @@ var infowindow = new google.maps.InfoWindow({
 });
 
 var app = angular.module('weatherapp', []);
-app.controller('MainController', function($scope, $http) {
+app.controller('MainController', function($scope, $http, weather) {
 
   map = new google.maps.Map(document.getElementById('map'), {
     center: {lat: 39.099727, lng: -94.578567},
     zoom: 4
   });
 
-  var cities = cityIds.join(',');
-  var url = 'http://api.openweathermap.org/data/2.5/group?id=' + cities + '&units=imperial&APPID=2316d4952cbc949469b1675923056c70';
-  $http.get(url)
-    .then(function(response) {
-      console.log(response);
-      response.data.list.forEach(function(city) {
-        citiesData.push(city);
-      });
-      createMarkers();
-      $scope.cityData = citiesData;
-  }, function(response) {
-    console.log('error is ', response);
+  weather.getWeather(function(response) {
+    console.log('the response is ', response);
+    response.data.list.forEach(function(city) {
+      citiesData.push(city);
+    });
+    createMarkers();
+    $scope.cityData = citiesData;
   });
 
   $scope.openInfoWindow = function (city) {
@@ -64,6 +59,25 @@ app.controller('MainController', function($scope, $http) {
     });
   };
 }); //end MainController
+
+app.factory('weather', function($http) {
+  var cities = cityIds.join(',');
+  var url = 'http://api.openweathermap.org/data/2.5/group';
+  var APPID = '2316d4952cbc949469b1675923056c70';
+  return {
+    getWeather: function(callback) {
+      $http({
+        url: url,
+        params: {
+          id: cities,
+          units: 'imperial',
+          APPID: APPID
+        }
+      }).then(callback);
+    }
+  };
+});
+
 
 function createMarkers() {
   citiesData.forEach(function(city) {
