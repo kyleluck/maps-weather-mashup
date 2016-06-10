@@ -208,7 +208,7 @@
       if (city.id == cityId) {
         console.log('this object matched ', city);
         mainMap.setCenter(city.marker.position);
-        mainMap.setZoom(11);
+        mainMap.setZoom(8);
         return;
       }
     });
