@@ -9,7 +9,7 @@
   app.config(function($routeProvider) {
     $routeProvider.when('/', {
       templateUrl: 'overview.html',
-      controller: 'MainController'
+      controller: 'MainController',
     })
     .when('/forecast/:cityId', {
       templateUrl: 'forecast-sidebar.html',
@@ -127,7 +127,12 @@
           city.marker.imageWeatherIcon = imageWeatherIcon; //use this if iconState is false
           city.marker.iconState = false;
 
-          setInterval(function() {
+          //clear interval if one is already running
+          if (city.intervalRunning) {
+            clearInterval(city.intervalRunning);
+          }
+
+          city.intervalRunning = setInterval(function() {
             var image;
             if (city.marker.iconState) {
               image = t.setupIconImage(city.marker.imageTempGauge, 20, 47, 10, 25);
